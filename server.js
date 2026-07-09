@@ -1,6 +1,10 @@
+// import dotenv from "dotenv";
+// dotenv.config();
+// console.log("DB_URL:", process.env.DB_URL);
 import express from "express";
 import path from "path";
 import { fileURLToPath } from "url";
+import { testConnection } from "./src/models/db.js";
 
 // Create the Express application
 const app = express();
@@ -51,6 +55,12 @@ app.get('/categories', async (req, res) => {
 /**
  * Start the server
  */
-app.listen(PORT, () => {
-  console.log(`Server running at http://127.0.0.1:${PORT}`);
+app.listen(PORT, async () => {
+  try {
+    await testConnection();
+    console.log(`Server is running at http://127.0.0.1:${PORT}`);
+    console.log(`Environment: ${process.env.NODE_ENV}`);
+  } catch (error) {
+    console.error('Error connecting to the database:', error);
+  }
 });
