@@ -5,6 +5,7 @@ import express from "express";
 import path from "path";
 import { fileURLToPath } from "url";
 import { testConnection } from "./src/models/db.js";
+import { getAllOrganizations } from "./src/models/organizations.js";
 
 // Create the Express application
 const app = express();
@@ -32,14 +33,28 @@ app.set('views', path.join(__dirname, 'src/views'));
 /**
  * Routes
  */
+
 app.get('/', async (req, res) => {
     const title = 'Home';
     res.render('home', { title });
 });
 
-app.get('/organizations', async (req, res) => {
-    const title = 'Our Partner Organizations';
-    res.render('organizations', { title });
+app.get("/organizations", async (req, res) => {
+    try {
+        console.log("Organizations route hit");
+
+        const organizations = await getAllOrganizations();
+
+        console.log(organizations);
+
+        res.render("organizations", {
+            title: "Organizations",
+            organizations
+        });
+    } catch (err) {
+        console.error(err);
+        res.status(500).send(err.message);
+    }
 });
 
 app.get('/projects', async (req, res) => {
