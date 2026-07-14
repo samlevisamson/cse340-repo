@@ -6,7 +6,8 @@ import path from "path";
 import { fileURLToPath } from "url";
 import { testConnection } from "./src/models/db.js";
 import { getAllOrganizations } from "./src/models/organizations.js";
-
+import { getAllProjects } from "./src/models/projects.js";
+import { getAllCategories } from "./src/models/categories.js";
 // Create the Express application
 const app = express();
 
@@ -57,14 +58,45 @@ app.get("/organizations", async (req, res) => {
     }
 });
 
+// app.get('/projects', async (req, res) => {
+//     const title = 'Service Projects';
+//     res.render('projects', { title });
+// });
+
 app.get('/projects', async (req, res) => {
-    const title = 'Service Projects';
-    res.render('projects', { title });
+    try {
+        const projects = await getAllProjects();
+
+        console.log("Projects:", projects);
+
+        res.render('projects', {
+            title: 'Service Projects',
+            projects
+        });
+
+    } catch (error) {
+        console.error(error);
+        res.status(500).send('Unable to load projects.');
+    }
 });
 
-app.get('/categories', async (req, res) => {
-    const title = 'Our Categories';
-    res.render('categories', { title });
+// app.get('/categories', async (req, res) => {
+//     const title = 'Our Categories';
+//     res.render('categories', { title });
+// });
+
+app.get("/categories", async (req, res) => {
+    try {
+        const categories = await getAllCategories();
+
+        res.render("categories", {
+            title: "Categories",
+            categories
+        });
+    } catch (error) {
+        console.error(error);
+        res.status(500).send("Unable to retrieve categories.");
+    }
 });
 
 /**
