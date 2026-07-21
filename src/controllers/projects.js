@@ -1,21 +1,34 @@
+import {
+    getAllProjects,
+    getProjectsByOrganizationId,
+    getUpcomingProjects,
+    getProjectDetails
+} from "../models/projects.js";
 
-import { getAllProjects } from "../models/projects.js";
+const NUMBER_OF_UPCOMING_PROJECTS = 5;
 
-const showProjectsPage =  async (req, res) => {
-    try {
-        const projects = await getAllProjects();
+const showProjectsPage = async (req, res) => {
+    const projects = await getUpcomingProjects(NUMBER_OF_UPCOMING_PROJECTS);
 
-        console.log("Projects:", projects);
+    console.log("Projects:", projects);
 
-        res.render('projects', {
-            title: 'Service Projects',
-            projects
-        });
-
-    } catch (error) {
-        console.error(error);
-        res.status(500).send('Unable to load projects.');
-    }
+    res.render("projects", {
+        title: "Upcoming Service Projects",
+        projects
+    });
 };
 
-export { showProjectsPage };
+const showProjectDetailsPage = async (req, res) => {
+    const projectId = req.params.id;
+    const project = await getProjectDetails(projectId);
+
+    res.render("project", {
+        title: "Project Details",
+        project
+    });
+};
+
+export {
+    showProjectsPage,
+    showProjectDetailsPage
+};
