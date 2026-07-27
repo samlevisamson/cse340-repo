@@ -1,5 +1,5 @@
 import { body, validationResult } from "express-validator";
-import { getAllProjects, getProjectsByOrganizationId, getUpcomingProjects, getProjectDetails, getCategoriesByProjectId, createProject } from "../models/projects.js";
+import { getAllProjects, getProjectsByOrganizationId, getUpcomingProjects, getProjectDetails, getCategoriesByProjectId, createProject, updateProject } from "../models/projects.js";
 import { getAllOrganizations } from "../models/organizations.js";
 
 const projectValidation = [
@@ -73,22 +73,68 @@ const processNewProjectForm = async (req, res) => {
     // Extract form data from req.body
     const { title, description, location, date, organizationId } = req.body;
 
-    try {
-        // Create the new project in the database
-        const newProjectId = await createProject(
-            title,
-            description,
-            location,
-            date,
-            organizationId
-        );
+    // Create the new project in the database
+    const newProjectId = await createProject(
+        title,
+        description,
+        location,
+        date,
+        organizationId
+    );
 
-        req.flash("success", "New service project created successfully!");
-        res.redirect(`/project/${newProjectId}`);
-    } catch (error) {
-        console.error("Error creating new project:", error);
-        req.flash("error", "There was an error creating the service project.");
-        res.redirect("/new-project");
-    }
+    req.flash("success", "New service project created successfully!");
+    res.redirect(`/project/${newProjectId}`);
 };
-export { showProjectsPage, showProjectDetailsPage, showNewProjectForm, processNewProjectForm, projectValidation };
+
+const showEditProjectForm = async (req, res) => {
+
+    const projectId = req.params.id;
+
+    const project = await getProjectDetails(projectId);
+    const organizations = await getAllOrganizations();
+
+    res.render("edit-project", {
+        title: "Edit Project",
+        project,
+        organizations
+    });
+};
+
+const processEditProjectForm = async (req, res) => {
+
+    const errors = validationResult(req);
+
+    if (!errors.isEmpty()) {
+
+        errors.array().forEach(error => {
+            req.flash("error", error.msg);
+        });
+
+        return res.redirect(`/edit-project/${req.params.id}`);
+    }
+
+    const projectId = req.params.id;
+
+    const {
+        title,
+        description,
+        location,
+        projectDate,
+        organizationId
+    } = req.body;
+
+    await updateProject(
+        projectId,
+        title,
+        description,
+        location,
+        projectDate,
+        organizationId
+    );
+
+    req.flash("success", "Project updated successfully!");
+
+    res.redirect(`/project/${projectId}`);
+};
+
+export { showProjectsPage, showProjectDetailsPage, showNewProjectForm, processNewProjectForm, projectValidation, showEditProjectForm, processEditProjectForm };
