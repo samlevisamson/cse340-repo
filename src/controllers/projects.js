@@ -15,7 +15,7 @@ const projectValidation = [
         .trim()
         .notEmpty().withMessage('Location is required')
         .isLength({ max: 200 }).withMessage('Location must be less than 200 characters'),
-    body('date')
+    body('projectDate')
         .notEmpty().withMessage('Date is required')
         .isISO8601().withMessage('Date must be a valid date format'),
     body('organizationId')
