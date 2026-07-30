@@ -1,5 +1,5 @@
 import express from 'express';
-import { showUserRegistrationForm, processUserRegistrationForm, showLoginForm, processLoginForm, processLogout, requireLogin, showDashboard, requireRole } from "./controllers/users.js";
+import { showUserRegistrationForm, processUserRegistrationForm, showLoginForm, processLoginForm, processLogout, requireLogin, showDashboard, showUsersPage, requireRole, } from "./controllers/users.js";
 import { showHomePage } from './controllers/index.js';
 import { showOrganizationsPage, showOrganizationDetailsPage, showNewOrganizationForm, processNewOrganizationForm, organizationValidation, showEditOrganizationForm, processEditOrganizationForm } from './controllers/organizations.js';
 import { showProjectsPage, showProjectDetailsPage, showNewProjectForm, processNewProjectForm, projectValidation, showEditProjectForm, processEditProjectForm } from './controllers/projects.js';
@@ -78,5 +78,8 @@ router.post("/edit-category/:id", requireRole('admin'), categoryValidation, proc
 
 // error-handling routes
 router.get('/test-error', testErrorPage);
+
+// Route for Users Page
+router.get('/users', requireRole('admin'), showUsersPage);
 
 export default router;
