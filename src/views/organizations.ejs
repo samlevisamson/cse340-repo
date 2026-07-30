@@ -9,7 +9,12 @@
         <% }); %>
     </ul>
     
-    <p><a href="/new-organization">Add a new organization</a></p>
+    <p>
+        <% if (locals.user && locals.user.role_name === 'admin') { %>
+            <a href="/new-organization">Add New Organization</a>
+        <% } %>
+    </p>
+    
 
 </main>
 
