@@ -5,6 +5,7 @@ import { showOrganizationsPage, showOrganizationDetailsPage, showNewOrganization
 import { showProjectsPage, showProjectDetailsPage, showNewProjectForm, processNewProjectForm, projectValidation, showEditProjectForm, processEditProjectForm } from './controllers/projects.js';
 import { showCategoriesPage, showCategoryDetailsPage, showAssignCategoriesForm, processAssignCategoriesForm, categoryValidation, showNewCategoryForm, processNewCategoryForm, showEditCategoryForm, processEditCategoryForm  } from "./controllers/categories.js";
 import { testErrorPage } from './controllers/errors.js';
+import { addVolunteer, removeVolunteer } from "./controllers/volunteer.js";
 
 const router = express.Router();
 
@@ -45,6 +46,11 @@ router.get('/projects', showProjectsPage);
 // Route for project details page
 router.get('/project/:id', showProjectDetailsPage);
 
+// Volunteer routes
+router.post('/project/:id/volunteer', requireLogin, addVolunteer);
+
+router.post('/project/:id/remove-volunteer', requireLogin, removeVolunteer);
+
 // Route for new project page
 router.get('/new-project', requireRole('admin'), showNewProjectForm);
 
@@ -81,5 +87,6 @@ router.get('/test-error', testErrorPage);
 
 // Route for Users Page
 router.get('/users', requireRole('admin'), showUsersPage);
+
 
 export default router;
